@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">VModelLifecycle</string>
+    <string name="counter_btn">Counter</string>
+</resources>
