@@ -30,6 +30,12 @@ class MainActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         initRecyclerView()
+
+        subscriberViewModel.message.observe(this, Observer {
+            it.getContentNotHandled()?.let {
+                Toast.makeText(this,it,Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun initRecyclerView(){

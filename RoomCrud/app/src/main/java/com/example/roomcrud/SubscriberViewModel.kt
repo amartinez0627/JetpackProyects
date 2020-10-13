@@ -2,6 +2,7 @@ package com.example.roomcrud
 
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,6 +28,11 @@ class SubscriberViewModel(private  val repository: SubscriberRepository): ViewMo
 
     @Bindable
     val clearOrDeleteBtnText = MutableLiveData<String>()
+
+    private val statusMessage = MutableLiveData<Event<String>>()
+
+    val message: LiveData<Event<String>>
+        get() = statusMessage
 
     init {
         saveOrUpdateBtnText.value = "Save"
@@ -59,7 +65,10 @@ class SubscriberViewModel(private  val repository: SubscriberRepository): ViewMo
 
     }
 
-    fun insert(subscriber: Subscriber): Job = viewModelScope.launch { repository.insert(subscriber) }
+    fun insert(subscriber: Subscriber): Job = viewModelScope.launch {
+        repository.insert(subscriber)
+        statusMessage.value = Event("Subscriber Inserted Successfully")
+    }
 
     fun update(subscriber: Subscriber): Job = viewModelScope.launch {
         repository.update(subscriber)
@@ -68,6 +77,7 @@ class SubscriberViewModel(private  val repository: SubscriberRepository): ViewMo
         isUpdateOrDelete = false
         saveOrUpdateBtnText.value = "Save"
         clearOrDeleteBtnText.value = "Clear All"
+        statusMessage.value = Event("Subscriber Updated Successfully")
     }
 
     fun delete(subscriber: Subscriber): Job = viewModelScope.launch {
@@ -77,9 +87,13 @@ class SubscriberViewModel(private  val repository: SubscriberRepository): ViewMo
         isUpdateOrDelete = false
         saveOrUpdateBtnText.value = "Save"
         clearOrDeleteBtnText.value = "Clear All"
+        statusMessage.value = Event("Subscriber Deleted Successfully")
     }
 
-    fun clearAll(): Job = viewModelScope.launch { repository.deleteAll() }
+    fun clearAll(): Job = viewModelScope.launch {
+        repository.deleteAll()
+        statusMessage.value = Event("All Subscribers Deleted Successfully")
+    }
 
     fun initUpdateAndDelete(subscriber: Subscriber){
         inputName.value = subscriber.name
