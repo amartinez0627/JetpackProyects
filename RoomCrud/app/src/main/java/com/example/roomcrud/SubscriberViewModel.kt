@@ -1,5 +1,6 @@
 package com.example.roomcrud
 
+import android.util.Patterns
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.lifecycle.LiveData
@@ -40,19 +41,31 @@ class SubscriberViewModel(private  val repository: SubscriberRepository): ViewMo
     }
 
     fun saveOrUpdate(){
-        if (isUpdateOrDelete){
-            subscriberToUpdateOrDelete.name = inputEmail.value!!
-            subscriberToUpdateOrDelete.email = inputEmail.value!!
-            update(subscriberToUpdateOrDelete)
+
+        if (inputName.value == null){
+            statusMessage.value = Event("Please enter subscriber's name")
+        }else if (inputEmail.value == null){
+            statusMessage.value = Event("Please enter subscriber's email")
+        }else if (!Patterns.EMAIL_ADDRESS.matcher(inputEmail.value!!).matches()){
+            statusMessage.value = Event("Please enter a correct email address")
         }else{
-            val name:String = inputName.value!!
-            val email:String = inputEmail.value!!
+            if (isUpdateOrDelete){
+                subscriberToUpdateOrDelete.name = inputEmail.value!!
+                subscriberToUpdateOrDelete.email = inputEmail.value!!
+                update(subscriberToUpdateOrDelete)
+            }else{
+                val name:String = inputName.value!!
+                val email:String = inputEmail.value!!
 
-            insert(Subscriber(0,name,email))
+                insert(Subscriber(0,name,email))
 
-            inputName.value = null
-            inputEmail.value = null
+                inputName.value = null
+                inputEmail.value = null
+            }
         }
+
+
+
 
     }
 
